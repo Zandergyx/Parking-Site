@@ -1,0 +1,12 @@
+button {
+  width: auto;
+  min-width: 60px;
+  flex: 1;
+}
+.button-container,
+.letter-button-container,
+.color-button-container {
+  flex-wrap: wrap;
+  justify-content: center;
+  display: flex;
+}
