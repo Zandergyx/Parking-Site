@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<link rel="stylesheet" href="style.css">
 <head>
   <meta charset="UTF-8">
   <title>Level, Sector & Section Selector</title>
@@ -26,7 +25,7 @@
     #level-display {
       font-size: 2em;
       display: inline-block;
-      width: 2ch;
+      width: 4ch;
       text-align: center;
     }
 
@@ -85,6 +84,11 @@
       vertical-align: middle;
     }
 
+    .subpart-label {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+
     /* Color-specific button classes */
     .red { background-color: red; }
     .orange { background-color: orange; }
@@ -99,13 +103,13 @@
 <body>
 
   <!-- Summary Display at Top -->
-  <div id="summary-display">Level: 0 | Sector: - | Section: -</div>
+  <div id="summary-display">Level: 0 | Subpart: - | Sector: - | Section: -</div>
 
   <!-- Level Display -->
   <h1>Level</h1><span id="level-display">0</span>
 
   <!-- Level Buttons -->
-  <div class="button-container">
+  <div class="button-container" id="level-buttons">
     <button class="level-button" onclick="setLevel(1)">1</button>
     <button class="level-button" onclick="setLevel(2)">2</button>
     <button class="level-button" onclick="setLevel(3)">3</button>
@@ -114,6 +118,15 @@
     <button class="level-button" onclick="setLevel(6)">6</button>
     <button class="level-button" onclick="setLevel(7)">7</button>
     <button class="level-button" onclick="setLevel(8)">8</button>
+  </div>
+
+  <!-- Subpart Label -->
+  <div class="subpart-label">Subpart</div>
+
+  <!-- Subpart Buttons -->
+  <div>
+    <button onclick="setSubpart('A')" style="background-color: #6c63ff;">A</button>
+    <button onclick="setSubpart('B')" style="background-color: #6c63ff;">B</button>
   </div>
 
   <!-- Sector Display -->
@@ -140,19 +153,36 @@
     <button class="brown" onclick="setColor('Brown')">Brown</button>
   </div>
 
+  <!-- Basement Toggle -->
+  <div style="margin-top: 40px;">
+    <div style="font-size: 1.5em; margin-bottom: 10px;">Basement:</div>
+    <button onclick="toggleBasement(true)" style="background-color: #333;">Yes</button>
+    <button onclick="toggleBasement(false)" style="background-color: #555;">No</button>
+  </div>
+  <div style="font-size: 1.5em; margin-bottom: 10px;">Reset Button</div>
+  <button onclick="resetSelections()" style="background-color:#777;">Reset</button>
+
+
   <script>
     let currentLevel = 0;
     let currentSector = '-';
     let currentColor = '-';
+    let currentSubpart = '-';
+    let isBasement = false;
 
     function updateSummary() {
       document.getElementById('summary-display').innerText =
-        `Level: ${currentLevel} | Sector: ${currentSector} | Section: ${currentColor}`;
+        `Level: ${currentLevel} | Subpart: ${currentSubpart} | Sector: ${currentSector} | Section: ${currentColor}`;
     }
 
     function setLevel(value) {
       currentLevel = value;
       document.getElementById('level-display').innerText = value;
+      updateSummary();
+    }
+
+    function setSubpart(value) {
+      currentSubpart = value;
       updateSummary();
     }
 
@@ -168,16 +198,46 @@
       updateSummary();
     }
 
+    function toggleBasement(enable) {
+      isBasement = enable;
+      const container = document.getElementById('level-buttons');
+      container.innerHTML = ''; // Clear existing buttons
+
+      for (let i = 1; i <= 8; i++) {
+        const levelLabel = isBasement ? `B${i}` : `${i}`;
+        const button = document.createElement('button');
+        button.innerText = levelLabel;
+        button.className = "level-button";
+        button.onclick = () => setLevel(levelLabel);
+        container.appendChild(button);
+      }
+
+      currentLevel = 0;
+      document.getElementById('level-display').innerText = '0';
+      updateSummary();
+    }
+
     // Create A–Z letter buttons
-    const container = document.getElementById('letter-buttons');
+    const letterContainer = document.getElementById('letter-buttons');
     for (let i = 0; i < 26; i++) {
       const letter = String.fromCharCode(65 + i); // A-Z
       const button = document.createElement('button');
       button.innerText = letter;
       button.className = "letter-button";
       button.onclick = () => setSector(letter);
-      container.appendChild(button);
+      letterContainer.appendChild(button);
     }
+    function resetSelections() {
+  currentLevel = 0;
+  currentSubpart = '-';
+  currentSector = '-';
+  currentColor = '-';
+  document.getElementById('level-display').innerText = '0';
+  document.getElementById('sector-display').innerText = 'Sector -';
+  document.getElementById('color-preview').style.backgroundColor = '';
+  updateSummary();
+}
+
   </script>
 
 </body>
